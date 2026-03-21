@@ -13,6 +13,7 @@
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
 - [ Django 6 ]( https://www.djangoproject.com/download/ )
+- [ mssql-django ]( https://pypi.org/project/mssql-django/ )
 - [ ODBC Driver 17 for SQL Server ]( https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver17 )
 
 ## Ejecutar backend.
