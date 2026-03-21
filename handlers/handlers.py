@@ -1,7 +1,13 @@
+# handlers.py
+# Manejadores de rutas.
+
+# Importar módulos de Django.
 from django.urls import path
 
-from routers.health import health_check
+# Importar rutas.
+from routes.personas_route import list_personas
 
+# Definir rutas.
 urlpatterns = [
-    path( 'health', health_check, name='health' ),
+    path( 'personas', list_personas, name='list_personas' ),
 ]
