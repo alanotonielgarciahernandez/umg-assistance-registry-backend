@@ -9,6 +9,7 @@
 ## Endpoints.
 - `/personas`: Lista los datos de las personas registradas en la tabla `dbo.personas`
 - `*`: Responde con un mensaje de error.
+- `/test`: Endpoint de prueba que devuelve "EndPoint Correcto"
 
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
