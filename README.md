@@ -7,9 +7,9 @@
 - El backend puede extraer datos de la base de datos y mostrarlos al usuario.
 
 ## Endpoints.
-- `/personas`: Lista los datos de las personas registradas en la tabla `dbo.personas`
-- `/test`: Endpoint de prueba que devuelve "EndPoint Correcto"
-- `*`: Responde con un mensaje de error.
+- `/personas`: Lista los datos de las personas registradas en la tabla `dbo.personas`.
+- `/login`: Lista los datos de las usuarios registrados en la tabla `dbo.usuarios` (Comparará usuario y contraseña con la base de datos para iniciar sesión y generar un JWT).
+- `*`: Responde con el mensaje "404 Not Found".
 
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
