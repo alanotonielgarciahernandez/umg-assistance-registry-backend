@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
+from models.usuario_model import Usuarios
 
 def test(request):
-    return HttpResponse("Endpoint correcto")
+    usuarios_lista = list(Usuarios.objects.values())
+    return JsonResponse(usuarios_lista, safe=False)
