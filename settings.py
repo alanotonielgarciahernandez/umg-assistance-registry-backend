@@ -31,10 +31,29 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or 'dev-secret-key-change-in-product
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'ninja',
+    'ninja_extra',
+    'ninja_jwt',
 
     'handlers',
     'models',
 ]
+
+# Configuración de autenticación JWT.
+from datetime import timedelta
+
+NINJA_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta( minutes=60 ),    # short-lived access token
+    'REFRESH_TOKEN_LIFETIME': timedelta( days=7 ),       # longer refresh token
+    'ROTATE_REFRESH_TOKENS': True,                       # issue new refresh token on use
+    'BLACKLIST_AFTER_ROTATION': True,                    # security best practice
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,                           # uses your Django SECRET_KEY
+    'VERIFYING_KEY': None,
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ( 'ninja_jwt.tokens.AccessToken', ),
+}
 
 # Middleware de seguridad.
 MIDDLEWARE = [

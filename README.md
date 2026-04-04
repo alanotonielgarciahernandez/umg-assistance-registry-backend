@@ -7,13 +7,14 @@
 - El backend puede extraer datos de la base de datos y mostrarlos al usuario.
 
 ## Endpoints.
-- `/personas`: Lista los datos de las personas registradas en la tabla `dbo.personas`.
-- `/login`: Lista los datos de las usuarios registrados en la tabla `dbo.usuarios` (Comparará usuario y contraseña con la base de datos para iniciar sesión y generar un JWT).
+- `/personas`: Lista los datos de las personas registradas en la tabla `dbo.personas` (Requiere JWT válido).
+- `/login`: Compara usuario y contraseña con la base de datos para iniciar sesión y generar un JWT.
 - `*`: Responde con el mensaje "404 Not Found".
 
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
 - [ Django 6 ]( https://www.djangoproject.com/download/ )
+- [ django-ninja ]( https://django-ninja.dev/tutorial/ )
 - [ mssql-django ]( https://pypi.org/project/mssql-django/ )
 - [ ODBC Driver 17 for SQL Server ]( https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver17 )
 
