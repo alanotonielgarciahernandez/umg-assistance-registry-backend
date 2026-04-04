@@ -1,5 +1,5 @@
-# routes.py
-# Definición de rutas para la API.
+# personas_route.py
+# Definición de la ruta para listar personas.
 
 # Importar módulos de Django.
 from django.http import JsonResponse
