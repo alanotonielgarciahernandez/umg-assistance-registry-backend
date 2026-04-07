@@ -11,11 +11,14 @@ from routes.login_route import login
 
 # rutas
 urlpatterns = [
-    # ruta de personas
+    # Ruta de personas
     path( 'personas', list_personas, name='list_personas' ),
     
-    # pase vip para probar login
+    # Ruta de login
     path( 'login', login, name='login' ),
+
+    # Ruta de salud utilizada por Kubernetes para verificar que el servidor esté funcionando.
+    path( 'health', lambda _: HttpResponse( status=200 ), name='health' ),
 
     # Ruta para manejar cualquier otra ruta no definida (404).
     path( '', lambda _: HttpResponse( '<h1>404 Not Found</h1>', status=404 ) ),
