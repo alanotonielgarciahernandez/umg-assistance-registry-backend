@@ -11,29 +11,31 @@ from django.views.decorators.http import require_POST
 from ninja_jwt.tokens import AccessToken
 
 # Importar modelo de usuario.
-from models.usuario_model import Usuarios
+from models.usuario_model import Usuario
 
 @csrf_exempt
 @require_POST
 def login( request ):
     try:
-        # 1 y 2. Sacamos correo y contraseña del body
+        # Obtenemos el correo y contraseña del body
         body = json.loads( request.body )
         correo_ingresado = body.get( 'correo' )
         password_ingresado = body.get( 'password' )
 
-        # 3. Buscamos si el correo existe en la base de datos
-        usuario = Usuarios.objects.filter( correo=correo_ingresado ).first()
+        # Buscamos si el correo existe en la base de datos
+        usuario = Usuario.objects.filter( correo=correo_ingresado ).first()
 
         if usuario:
-            # 4. Si el correo coincide, comparamos la contraseña
+            # Si el correo existe, comparamos la contraseña
             if usuario.password == password_ingresado:
-                # 5. Todo coincide -> devolvemos JWT de acceso.
+                # Si la contraseña es correcta, devolvemos JWT de acceso.
                 access = AccessToken()
                 access[ 'user_id' ] = usuario.id_usuario
                 access[ 'correo' ] = usuario.correo
-                access[ 'rol' ] = usuario.rol
-                access[ 'id_persona' ] = usuario.id_persona.id_persona
+                access[ 'rol' ] = usuario.rol.id_rol
+                access[ 'nombre' ] = usuario.persona.nombre
+                access[ 'apellido' ] = usuario.persona.apellido
+                access[ 'fotografia' ] = usuario.persona.fotografia_path
 
                 return JsonResponse(
                     {
@@ -48,4 +50,5 @@ def login( request ):
             return JsonResponse( { "error": "Credenciales incorrectas" }, status=404 )
 
     except Exception as e:
+        print( "Error al procesar la solicitud de inicio de sesión:", e )
         return JsonResponse( { "error": "Datos inválidos" }, status=400 )

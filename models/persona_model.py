@@ -23,8 +23,3 @@ class Persona( models.Model ):
     # Metadatos del modelo.
     class Meta:
         db_table = "personas"
-        verbose_name = "Persona"
-
-    # Representación en cadena del modelo.
-    def __str__(self):
-        return f"{ self.nombre } - { self.tipo_persona }"

@@ -4,6 +4,7 @@
 # Importar módulos de Django.
 from django.http import JsonResponse
 from django.views.decorators.http import require_safe
+import base64
 
 # Importar modelo de persona.
 from models.persona_model import Persona
@@ -17,5 +18,13 @@ def list_personas( request ):
     
     if validar_JWT_response:
         return validar_JWT_response
+    
+    personas = Persona.objects.all().values()
+    personas_data = list(personas)
+    
+    # Convertir campos bytes a base64 para serialización JSON
+    for persona in personas_data:
+        if persona.get( 'vector_facial') and isinstance( persona[ 'vector_facial' ], bytes  ):
+            persona[ 'vector_facial' ] = base64.b64encode( persona[ 'vector_facial' ] ).decode( 'utf-8' )
 
-    return JsonResponse( list( Persona.objects.all().values() ), safe=False )
+    return JsonResponse( personas_data, safe=False )

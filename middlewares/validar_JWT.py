@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from ninja_jwt.tokens import AccessToken
 
 # Importar modelo de usuario.
-from models.usuario_model import Usuarios
+from models.usuario_model import Usuario
 
 def validateJWT( request ):
     # Validar que el encabezado de autorización esté presente.
@@ -35,8 +35,8 @@ def validateJWT( request ):
     # Verificar que el usuario en el token exista en la base de datos.
     try:
         user_id = access_token[ 'user_id' ]
-        Usuarios.objects.get( id_usuario=user_id )
-    except ( KeyError, Usuarios.DoesNotExist ):
+        Usuario.objects.get( id_usuario=user_id )
+    except ( KeyError, Usuario.DoesNotExist ):
         return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
     return None
