@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-umg-assistance-registry-backend
+spec:
+  selector:
+    app: umg-assistance-registry-backend   # Enruta el tráfico a los Pods con esta etiqueta, que coincide con la plantilla del Deployment.
+  ports:
+    - protocol: TCP
+      # Puerto que el Service expondrá dentro del clúster.
+      port: 80
+      # Puerto que escucha el contenedor en el Pod. Debe coincidir con el containerPort definido en el Deployment.
+      targetPort: 80
+
+  # ClusterIP hace accesible el servicio solo dentro del clúster.
+  # El Ingress controller será el único punto de entrada público en su lugar.
+  type: ClusterIP

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-umg-assistance-registry-backend
+spec:
+  replicas: 1        # Iniciar con 1 copia de la aplicación; aumentar para alta disponibilidad.
+  selector:
+    matchLabels:
+      app: umg-assistance-registry-backend   # Debe coincidir con las etiquetas en la plantilla del Pod a continuación.
+  template:
+    metadata:
+      labels:
+        app: umg-assistance-registry-backend
+    spec:
+      containers:
+        - name: backend
+          # Imagen de la aplicación.
+          image: alanotonielgarciahernandez/umg-assistance-registry:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+
+          # Variables de entorno, incluyendo valores sensibles desde el Secret.
+          env:
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DJANGO_SECRET_KEY
+            
+            - name: DJANGO_DEBUG
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DJANGO_DEBUG
+
+            - name: DJANGO_ALLOWED_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DJANGO_ALLOWED_HOSTS
+
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DB_NAME
+
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DB_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DB_PASSWORD
+
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DB_HOST
+
+          resources:
+            requests:
+              cpu: "100m"      # 0.1 núcleos de CPU mínimo.
+              memory: "128Mi"
+            limits:
+              cpu: "500m"      # 0.5 núcleos de CPU máximo.
+              memory: "256Mi"

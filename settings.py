@@ -4,36 +4,42 @@ import os
 
 # Cargar variables de entorno desde el archivo .env.
 def _load_env_file():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if not os.path.exists(env_path):
+    env_path = os.path.join( os.path.dirname( __file__ ), '.env' )
+    if not os.path.exists( env_path ):
         return
 
-    with open(env_path, 'r', encoding='utf-8') as env_file:
+    with open( env_path, 'r', encoding='utf-8' ) as env_file:
         for line in env_file:
             stripped_line = line.strip()
-            if not stripped_line or stripped_line.startswith('#') or '=' not in stripped_line:
+            if not stripped_line or stripped_line.startswith( '#' ) or '=' not in stripped_line:
                 continue
 
-            key, value = stripped_line.split('=', 1)
+            key, value = stripped_line.split( '=', 1 )
             parsed_key = key.strip()
-            parsed_value = value.strip().strip('"').strip("'")
+            parsed_value = value.strip().strip( '"' ).strip( "'" )
             os.environ.setdefault(parsed_key, parsed_value)
 
 _load_env_file()
+
+
+def _env_list( name: str, default: str = '' ) -> list[ str ]:
+    value = os.getenv( name, default )
+    return [ item.strip() for item in value.split(',') if item.strip() ]
+
 
 # Habilitar modo de depuración.
 DEBUG = True
 
 # Clave secreta para firmar sesiones/tokens de Django.
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY') or 'dev-secret-key-change-in-production'
+SECRET_KEY = os.getenv( 'DJANGO_SECRET_KEY' )
 
 # Aplicaciones activas.
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'ninja',
-    'ninja_extra',
     'ninja_jwt',
+    'corsheaders',
 
     'handlers',
     'models',
@@ -57,21 +63,36 @@ NINJA_JWT = {
 
 # Middleware de seguridad.
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 # Encabezados de Seguridad.
-SECURE_HSTS_SECONDS = 31536000       # 1 año.
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 0              # Desactivar HSTS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = False          # No redirigir a HTTPS, ya que el contenedor puede estar detrás de un proxy que maneja TLS.
+SESSION_COOKIE_SECURE = False        # Permitir HTTP en contenedor
+CSRF_COOKIE_SECURE = False           # Permitir HTTP en contenedor
+
+# Configuración de CORS.
+CORS_ALLOW_ALL_ORIGINS = False       # Permitir todas las fuentes. En producción, se recomienda restringir esto.
+
+CORS_ALLOW_CREDENTIALS = True        # Permitir el envío de cookies y encabezados de autenticación en solicitudes CORS.
+
+CORS_ALLOW_METHODS = [               # Métodos HTTP permitidos.
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
 # Hosts permitidos.
-ALLOWED_HOSTS = [ 'localhost', '127.0.0.1' ]
+ALLOWED_HOSTS = _env_list( 'DJANGO_ALLOWED_HOSTS', '*' )  # Por defecto acepta todos, se puede restringir via variable de entorno
 
 # URL de enrutamiento.
 ROOT_URLCONF = 'handlers.handlers'

@@ -17,16 +17,19 @@ El backend utiliza JWT de tipo Bearer, es necesario que el encabezado `Authoriza
 
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
-- [ Django 6 ]( https://www.djangoproject.com/download/ )
-- [ django-ninja ]( https://django-ninja.dev/tutorial/ )
-- [ django-ninja-extra ]( https://pypi.org/project/django-ninja-extra/ )
-- [ django-ninja-jwt ]( https://pypi.org/project/django-ninja-jwt/ )
-- [ mssql-django ]( https://pypi.org/project/mssql-django/ )
+- [ Django 6.0.3 ]( https://www.djangoproject.com/download/ )
+- [ django-ninja 1.6.2 ]( https://django-ninja.dev/tutorial/ )
+- [ django-ninja-jwt 5.4.4 ]( https://pypi.org/project/django-ninja-jwt/ )
+- [ django-cors-headers 4.9.0 ]( https://pypi.org/project/django-ninja-jwt/ )
+- [ mssql-django 1.7 ]( https://pypi.org/project/mssql-django/ )
+- [ waitress 3.0.2 ]( https://pypi.org/project/django-cors-headers/ )
 - [ ODBC Driver 17 for SQL Server ]( https://learn.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver17 )
 
 ## Ejecutar backend.
 Es necesario definir las siguientes variables de entorno antes de iniciar el servidor:
 ```
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=*
 DJANGO_SECRET_KEY=tu-clave-secreta-segura
 DB_NAME=tu-nombre-de-base-de-datos-sql-server
 DB_USER=tu-usuario-sql-server
@@ -38,4 +41,19 @@ Puedes definir las variables manualmente o en un archivo `.env` en la raíz del 
 Para desarrollo local:
 ```
 py manage.py runserver
+```
+
+Para producción (contenedor):
+```
+docker build . -t umg-assistance-registry
+
+docker run --rm -p 8000:8000 \
+  -e DJANGO_SECRET_KEY=tu-clave-secreta-segura \
+  -e DJANGO_DEBUG=False \
+  -e DJANGO_ALLOWED_HOSTS=tu-dominio.com,localhost,127.0.0.1 \
+  -e DB_NAME=tu-nombre-de-base-de-datos-sql-server \
+  -e DB_USER=tu-usuario-sql-server \
+  -e DB_PASSWORD=tu-contraseña-de-usuario-sql-server \
+  -e DB_HOST=tu-host-sql-server \
+  umg-assistance-registry
 ```
