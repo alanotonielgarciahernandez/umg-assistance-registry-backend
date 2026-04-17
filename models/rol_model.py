@@ -11,6 +11,7 @@ class Roles( Enum ):
     CATEDRATICO = 2
     ESTUDIANTE = 3
 
+# Modelo de rol.
 class Rol( models.Model ):
     id_rol = models.AutoField( primary_key=True )
     nombre = models.CharField( max_length=50 )

@@ -8,12 +8,13 @@ from django.db import models
 from models.persona_model import Persona
 from models.rol_model import Rol
 
+# Modelo de usuario.
 class Usuario( models.Model ):
-    id_usuario = models.AutoField( primary_key=True )
-    persona = models.ForeignKey( Persona, models.DO_NOTHING, db_column='id_persona', blank=True, null=True )
-    correo = models.CharField( max_length=100, blank=True, null=True )
-    password = models.CharField( max_length=100, blank=True, null=True )
-    rol = models.ForeignKey( Rol, models.DO_NOTHING, db_column='id_rol', blank=True, null=True )
+    id_usuario: int = models.AutoField( primary_key=True )
+    persona: Persona = models.ForeignKey( Persona, models.DO_NOTHING, db_column='id_persona', blank=True, null=True )
+    correo: str = models.CharField( max_length=100, blank=True, null=True )
+    password: str = models.CharField( max_length=100, blank=True, null=True )
+    rol: Rol = models.ForeignKey( Rol, models.DO_NOTHING, db_column='id_rol', blank=True, null=True )
 
     class Meta:
         db_table = 'usuarios'

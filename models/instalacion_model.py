@@ -1,9 +1,14 @@
+# instalacion_model.py
+# Modelo de instalaciones.
+
+# Importar módulos de Django.
 from django.db import models
 
-class Instalaciones(models.Model):
-    id_instalacion = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
+# Modelo de instalación.
+class Instalacion( models.Model ):
+    id_instalacion: int = models.AutoField( primary_key=True )
+    nombre: str = models.CharField( max_length=50 )
+    direccion: str = models.CharField( max_length=100, blank=True, null=True )
 
     class Meta:
-        managed = False
         db_table = 'instalaciones'
