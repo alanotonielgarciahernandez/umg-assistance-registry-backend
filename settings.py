@@ -66,7 +66,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 # Encabezados de Seguridad.
@@ -80,15 +79,19 @@ CSRF_COOKIE_SECURE = False           # Permitir HTTP en contenedor
 # Configuración de CORS.
 CORS_ALLOW_ALL_ORIGINS = False       # Permitir todas las fuentes. En producción, se recomienda restringir esto.
 
+CORS_ALLOWED_ORIGINS = [             # Orígenes permitidos para solicitudes CORS.
+    'http://localhost:5173',         # Local
+]
+
 CORS_ALLOW_CREDENTIALS = True        # Permitir el envío de cookies y encabezados de autenticación en solicitudes CORS.
 
 CORS_ALLOW_METHODS = [               # Métodos HTTP permitidos.
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 
 # Hosts permitidos.
@@ -105,7 +108,7 @@ DATABASES = {
         'USER': os.getenv( 'DB_USER', '' ),
         'PASSWORD': os.getenv( 'DB_PASSWORD', '' ),
         'HOST': os.getenv( 'DB_HOST', '' ),
-        'PORT': '1433',
+        'PORT': os.getenv( 'DB_PORT', '1433' ),
 
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',

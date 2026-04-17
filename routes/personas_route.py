@@ -20,7 +20,7 @@ def list_personas( request ):
         return validar_JWT_response
     
     personas = Persona.objects.all().values()
-    personas_data = list(personas)
+    personas_data = list( personas )
     
     # Convertir campos bytes a base64 para serialización JSON
     for persona in personas_data:

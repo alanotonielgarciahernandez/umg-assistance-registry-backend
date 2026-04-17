@@ -8,14 +8,28 @@
 - El backend utiliza JWT para autenticaciones en endpoints e inicio de sesión.
 
 ## Endpoints.
-- `/personas`: Extrae JWT de `headers.Authorization` para listar los datos de las personas registradas en la tabla `dbo.personas`.
-- `/login`: Extrae usuario y contraseña de `request.body` y compara con la base de datos para iniciar sesión y generar un JWT.
-- `/instalaciones`: Lista todas las instalaciones registradas, cada una con su lista de puertas y salones.
-- `/reportes/puerta/historico`: Lista todos los días con registros de ingreso para la puerta indicada, agrupados por fecha.
-- `/reportes/puerta/fecha`: Lista las personas que ingresaron por la puerta indicada en una fecha específica.
-- `/reportes/salon/historico`: Lista todos los días con registros de ingreso al salón indicado, agrupados por fecha.
-- `/reportes/salon/fecha`: Lista las personas que ingresaron al salón indicado en una fecha específica, con su tipo de persona.
-- `*`: Responde con el mensaje "404 Not Found".
+### `/personas`
+Extrae JWT de `headers.Authorization` para listar los datos de las personas registradas en la tabla `dbo.personas`.
+### `/login`
+Extrae usuario y contraseña de `request.body` y compara con la base de datos para iniciar sesión y generar un JWT.
+### `/cursos`
+Lista cursos asignados al catedrático autenticado.
+### `/cursos/:id_asignacion/asistencia?fecha=YYY-MM-DD`
+Lista  todos los estudiantes del salón del curso con su estado de asistencia para la fecha indicada.
+### `/cursos/:id_asignacion/asistencia`
+Inserta o actualiza los registros recibidos en registro_asistencia, genera un PDF con la tabla de asistencia y lo envía al correo registrado del catedrático. Retorna también la URL del PDF generado.
+### `/instalaciones`
+Lista todas las instalaciones registradas, cada una con su lista de puertas y salones.
+### `/reportes/puerta/historico`
+Lista todos los días con registros de ingreso para la puerta indicada, agrupados por fecha.
+### `/reportes/puerta/fecha`
+Lista las personas que ingresaron por la puerta indicada en una fecha específica.
+### `/reportes/salon/historico`
+Lista todos los días con registros de ingreso al salón indicado, agrupados por fecha.
+### `/reportes/salon/fecha`
+Lista las personas que ingresaron al salón indicado en una fecha específica, con su tipo de persona.
+### `*`
+Responde con el mensaje "404 Not Found".
 
 ## Bearer JWT como encabezado de autorización.
 El backend utiliza JWT de tipo Bearer, es necesario que el encabezado `Authorization` para los endpoints que requieren el JWT comienzen con la palabra `Bearer` seguidos del JWT sin espacios.

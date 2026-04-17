@@ -5,50 +5,45 @@ import json
 
 # Importar módulos de Django.
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
-from ninja_jwt.tokens import AccessToken
 
 # Importar modelo de usuario.
 from models.usuario_model import Usuario
 
-@csrf_exempt
+# Importar funciones de la base de datos.
+from db.iniciar_sesion import try_login
+
+# Importar generador de JWT.
+from tokens.jwt import generate_jwt
+
 @require_POST
 def login( request ):
     try:
-        # Obtenemos el correo y contraseña del body
+        # Obtener el correo y contraseña del body.
         body = json.loads( request.body )
-        correo_ingresado = body.get( 'correo' )
-        password_ingresado = body.get( 'password' )
 
-        # Buscamos si el correo existe en la base de datos
-        usuario = Usuario.objects.filter( correo=correo_ingresado ).first()
+        user: Usuario = Usuario(
+            correo=body.get( 'correo' ),
+            password=body.get( 'password' ),
+        )
+    except json.JSONDecodeError:
+        return JsonResponse( { 'error': 'Usuario o contraseña incorrectos' }, status=400 )
 
-        if usuario:
-            # Si el correo existe, comparamos la contraseña
-            if usuario.password == password_ingresado:
-                # Si la contraseña es correcta, devolvemos JWT de acceso.
-                access = AccessToken()
-                access[ 'user_id' ] = usuario.id_usuario
-                access[ 'correo' ] = usuario.correo
-                access[ 'rol' ] = usuario.rol.id_rol
-                access[ 'nombre' ] = usuario.persona.nombre
-                access[ 'apellido' ] = usuario.persona.apellido
-                access[ 'fotografia' ] = usuario.persona.fotografia_path
+    # Intentar iniciar sesión con las credenciales proporcionadas.
+    db_user: Usuario = try_login( user.correo, user.password )
+    if not db_user:
+        return JsonResponse( { 'error': 'Usuario o contraseña incorrectos' }, status=401 )
+    
+    # Generar token JWT para el usuario autenticado.
+    jwt_token = generate_jwt( db_user )
+    if not jwt_token:
+        return JsonResponse( { 'error': 'Error al generar token' }, status=500 )
 
-                return JsonResponse(
-                    {
-                        'access': str( access ),
-                        'token_type': 'Bearer',
-                    },
-                    status=200,
-                )
-            else:
-                return JsonResponse( { "error": "Credenciales incorrectas" }, status=401 )
-        else:
-            return JsonResponse( { "error": "Credenciales incorrectas" }, status=404 )
-
-    except Exception as e:
-        print( "Error al procesar la solicitud de inicio de sesión:", e )
-        return JsonResponse( { "error": "Datos inválidos" }, status=400 )
+    # Devolver el token JWT en la respuesta.
+    return JsonResponse(
+        {
+            'access': str( jwt_token ),
+            'token_type': 'Bearer',
+        },
+        status=200,
+    )
