@@ -15,9 +15,11 @@ from models.registro_model import Asistencia
 from models.curso_model import Curso
 from models.persona_model import Persona
 
-def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lista_asistencia: list[ dict ] ):
+def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lista_asistencia: list[ dict ] ) -> str:
+    # Obtener información del curso desde la base de datos.
     course: Curso = Curso.objects.get( id_asignacion=id_asignacion )
 
+    # Convertir la lista de asistencia a objetos de tipo Asistencia.
     assitance_list: list[ Asistencia ] = [
         Asistencia(
             persona=Persona.objects.get( id_persona=assistance[ 'id_persona' ] ),
@@ -27,10 +29,10 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
     ]
 
     # Posición vertical en donde dibujar objetos.
-    canvas_y_position = 750
+    canvas_y_position: int = 750
 
     # Crear un nuevo PDF.
-    c = canvas.Canvas( f'media/asistencia-{ id_asignacion }-{ fecha_asistencia }.pdf', pagesize=letter )
+    c: canvas.Canvas = canvas.Canvas( f'media/asistencia-{ id_asignacion }-{ fecha_asistencia }.pdf', pagesize=letter )
 
     # Dibujar el título del reporte.
     c.setFont( 'Helvetica-Bold', 18 )
@@ -56,7 +58,7 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
     canvas_y_position -= 100
 
     # Crear tabla de asistencia.
-    table = Table(
+    table: Table = Table(
         # Agregar valores de la tabla.
         data = [
             # Encabezados de la tabla.
@@ -64,8 +66,8 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
             # Filas de datos.
             *[
                 [
-                    assistance.persona.fotografia_path,  # Aquí se podría agregar la lógica para mostrar la foto real.
-                    f"{ assistance.persona.nombre } { assistance.persona.apellido }",
+                    '<Imagen>',  # Aquí se podría agregar la lógica para mostrar la foto real.
+                    f'{ assistance.persona.nombre } { assistance.persona.apellido }',
                     assistance.estado,
                 ]
                 for assistance in assitance_list

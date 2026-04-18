@@ -18,10 +18,10 @@ class Persona( models.Model ):
     carrera: str = models.CharField( max_length=100, blank=True, null=True )
     seccion: str = models.CharField( max_length=10, blank=True, null=True )
     fotografia_path: str = models.CharField( max_length=255, blank=True, null=True )
-    vector_facial: str = models.TextField( blank=True, null=True )
     carnet: str = models.CharField( max_length=20, blank=True, null=True )
     qr_path: str = models.CharField( max_length=255, blank=True, null=True )
     fecha_registro: datetime = models.DateTimeField( blank=True, null=True )
+    vector_facial: bytes = models.BinaryField( blank=True, null=True )
 
     # Metadatos del modelo.
     class Meta:

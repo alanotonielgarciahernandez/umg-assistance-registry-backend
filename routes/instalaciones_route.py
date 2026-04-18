@@ -1,41 +1,39 @@
+# instalaciones_route.py
+# Definición de la ruta para la tabla de instalaciones.
+
+# Importar módulos de Django.
 from django.http import JsonResponse
-from django.views.decorators.http import require_safe
+from django.views import View
 
-# Importamos los modelos que acabas de crear
-from models.instalacion_model import Instalacion
-from models.puerta_model import Puerta
-from models.salon_model import Salon
+# Importar modelos.
+from models.rol_model import Roles
+from models.usuario_model import Usuario
 
-# Importamos el guardia de seguridad de tu compañero
-from middlewares.validar_JWT import validateJWT
+# Importar middlewares.
+from middlewares.validate_jwt import validateJWT
+from middlewares.validate_role import validateRole
 
-@require_safe
-def list_instalaciones( request ):
-    # 1. Validar el token de seguridad
-    validar_JWT_response = validateJWT( request )
-    if validar_JWT_response:
-        return validar_JWT_response
-    
-    # 2. Traer todos los edificios (instalaciones)
-    instalaciones = Instalacion.objects.all()
-    resultado = []
+# Importar funciones de la base de datos.
+from db.get_instalaciones import get_instalaciones
 
-    # 3. Recorrer cada edificio para meterle sus puertas y salones
-    for instalacion in instalaciones:
-        # Buscar puertas que pertenezcan a este edificio
-        puertas = Puerta.objects.filter( instalacion__id_instalacion=instalacion.id_instalacion ).values( 'id_puerta', 'nombre' )
+class InstalacionesView( View ):
+    def get( self, request ) -> JsonResponse:
+        # Validar que el encabezado de autorización esté presente.
+        auth_header: str = request.headers.get( 'Authorization' )
+        if not auth_header:
+            return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
         
-        # Buscar salones que pertenezcan a este edificio
-        salones = Salon.objects.filter( instalacion__id_instalacion=instalacion.id_instalacion ).values( 'id_salon', 'nivel', 'nombre' )
+        # Validar el token JWT.
+        user: Usuario = validateJWT( auth_header )
+        if not user:
+            return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
+        
+        # Validar rol del usuario.
+        if not validateRole( user, [ Roles.ADMIN ] ):
+            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
+        
+        # Obtener la lista de instalaciones desde la base de datos.
+        list_instalaciones: list[ dict ] = get_instalaciones()
 
-        # Armar la "caja" con los datos del edificio y meterle las puertas y salones
-        edificio_data = {
-            "id_instalacion": instalacion.id_instalacion,
-            "nombre": instalacion.nombre,
-            "puertas": list( puertas ),
-            "salones": list( salones )
-        }
-        resultado.append( edificio_data )
-
-    # 4. Devolver la respuesta en formato JSON
-    return JsonResponse( resultado, safe=False )
+        # 4. Devolver la respuesta en formato JSON
+        return JsonResponse( list_instalaciones, safe=False )

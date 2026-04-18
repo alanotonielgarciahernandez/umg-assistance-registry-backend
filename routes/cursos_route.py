@@ -9,154 +9,100 @@ from datetime import date
 from django.http import JsonResponse
 from django.views import View
 
-# Importar middleware de validación de JWT.
-from middlewares.validar_JWT import validateJWT
-from middlewares.validar_rol import validateRole
+# Importar middlewares.
+from middlewares.validate_jwt import validateJWT
+from middlewares.validate_role import validateRole
 
 # Importar modelos.
-from models.curso_model import Curso
 from models.rol_model import Roles
-from models.registro_model import IngresoSalon
+from models.usuario_model import Usuario
 
 # Importar funciones de la base de datos.
-from db.guardar_registro import guardar_registro
+from db.get_asistencia import get_curso_asistencia_by_persona
+from db.get_cursos import get_cursos_by_persona
+from db.set_asistencia import save_asistencia
 
 # Importar funciones de reportes.
 from reports.asistencia_report import generar_registro_asistencia
 
 class CursosView( View ):
-    def get( self, request ):
+    def get( self, request ) -> JsonResponse:
         # Validar que el encabezado de autorización esté presente.
-        auth_header = request.headers.get( 'Authorization' )
+        auth_header: str = request.headers.get( 'Authorization' )
         if not auth_header:
             return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
-
-        # Validar que el encabezado de autorización tenga el formato correcto.
-        if not auth_header.startswith( 'Bearer' ):
-            return JsonResponse( { 'detail': 'Formato de token inválido.' }, status=401 )
-
-        # Extraer el token del encabezado de autorización.
-        token = auth_header[ 6: ].strip()
-        if not token:
-            return JsonResponse( { 'detail': 'Token no proporcionado.' }, status=401 )
         
         # Validar el token JWT.
-        user = validateJWT( token )
-        if not user:
+        user: Usuario = validateJWT( auth_header )
+        if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
         # Validar rol del usuario.
-        if not validateRole( user, Roles.CATEDRATICO ):
+        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
             return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
 
-        cursos = Curso.objects.filter( persona__id_persona=user.persona.id_persona )
+        # Obtener la lista de cursos desde la base de datos.
+        curso_list: list[ dict ] = get_cursos_by_persona( user )
 
-        # Serializar manualmente.
-        data = [
-            {
-                'id_asignacion': curso.id_asignacion,
-                'nombre_curso': curso.nombre_curso,
-                'horario': curso.horario,
-                'id_persona': curso.persona.id_persona,
-                'salon': {
-                    'id_salon': curso.salon.id_salon,
-                    'nombre': curso.salon.nombre,
-                    'nivel': curso.salon.nivel,
-                } if curso.salon else None
-            }
-            for curso in cursos
-        ]
-
-        return JsonResponse( data, safe=False )
+        return JsonResponse( curso_list, safe=False )
 
 class AsistenciaView( View ):
     # Obtener la lista de asistencia para un curso específico.
-    def get( self, request, id_asignacion ):
-        fecha = request.GET.get( 'fecha', date.today() )  # Opcional, para filtrar por fecha específica.
+    def get( self, request, id_asignacion: int ) -> JsonResponse:
+        # Obtener la fecha de consulta de los parámetros de la solicitud, o usar la fecha actual si no se proporciona.
+        fecha: date = request.GET.get( 'fecha', date.today() )
 
         # Validar que el encabezado de autorización esté presente.
-        auth_header = request.headers.get( 'Authorization' )
+        auth_header: str = request.headers.get( 'Authorization' )
         if not auth_header:
             return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
-
-        # Validar que el encabezado de autorización tenga el formato correcto.
-        if not auth_header.startswith( 'Bearer' ):
-            return JsonResponse( { 'detail': 'Formato de token inválido.' }, status=401 )
-
-        # Extraer el token del encabezado de autorización.
-        token = auth_header[ 6: ].strip()
-        if not token:
-            return JsonResponse( { 'detail': 'Token no proporcionado.' }, status=401 )
         
         # Validar el token JWT.
-        user = validateJWT( token )
-        if not user:
+        user: Usuario = validateJWT( auth_header )
+        if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
         # Validar rol del usuario.
-        if not validateRole( user, Roles.CATEDRATICO ):
+        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
             return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
 
-        # Validar que el curso exista y que el catedrático sea el dueño.
-        curso = Curso.objects.filter( id_asignacion=id_asignacion, persona__id_persona=user.persona.id_persona ).first()
-        if not curso:
+        # Obtener la lista de asistencia desde la base de datos.
+        list_asistencia: list[ dict ] = get_curso_asistencia_by_persona( id_asignacion, user, fecha )
+        if list_asistencia is None:
             return JsonResponse( { 'detail': 'Curso no encontrado.' }, status=404 )
-        
-        print( str( fecha ) )
 
-        # Obtener los registros de ingreso al salón para el curso.
-        ingreso_salon = IngresoSalon.objects.filter( salon__id_salon=curso.salon.id_salon, fecha_hora__date=fecha ).order_by( '-fecha_hora' )
-        
-        # Serializar manualmente.
-        data = [
-            {
-                'id_persona': ingreso.persona.id_persona,
-                'nombre': ingreso.persona.nombre,
-                'apellido': ingreso.persona.apellido,
-                'correo': ingreso.persona.correo,
-                'fotografia_path': ingreso.salon.id_salon,
-                'estado': 'PRESENTE'
-            }
-            for ingreso in ingreso_salon
-        ]
-
-        return JsonResponse( data, safe=False )
+        return JsonResponse( list_asistencia, safe=False )
     
-    def post( self, request, id_asignacion ):
+    def post( self, request, id_asignacion ) -> JsonResponse:
         # Validar que el encabezado de autorización esté presente.
-        auth_header = request.headers.get( 'Authorization' )
+        auth_header: str = request.headers.get( 'Authorization' )
         if not auth_header:
             return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
-
-        # Validar que el encabezado de autorización tenga el formato correcto.
-        if not auth_header.startswith( 'Bearer' ):
-            return JsonResponse( { 'detail': 'Formato de token inválido.' }, status=401 )
-
-        # Extraer el token del encabezado de autorización.
-        token = auth_header[ 6: ].strip()
-        if not token:
-            return JsonResponse( { 'detail': 'Token no proporcionado.' }, status=401 )
         
         # Validar el token JWT.
-        user = validateJWT( token )
-        if not user:
+        user: Usuario = validateJWT( auth_header )
+        if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
         # Validar rol del usuario.
-        if not validateRole( user, Roles.CATEDRATICO ):
+        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
             return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
         
         # Obtenemos datos de asistencia del cuerpo de la solicitud.
-        body = json.loads( request.body )
+        body: dict = json.loads( request.body )
 
-        status = guardar_registro( id_asignacion, user, body.get( 'fecha', date.today() ), body.get( 'asistencias', [] ) )
-        if not status:
+        # Guardar el registro de asistencia en la base de datos.
+        status: dict = save_asistencia( id_asignacion, user, body.get( 'fecha', date.today() ), body.get( 'asistencias', [] ) )
+        if status is None:
             return JsonResponse( { 'detail': 'Error al guardar el registro.' }, status=500 )
         
-        pdf_path = generar_registro_asistencia( id_asignacion, body.get( 'fecha', date.today() ), body.get( 'asistencias', [] ) )
+        # Generar el reporte de asistencia en PDF.
+        pdf_path: str = generar_registro_asistencia( id_asignacion, body.get( 'fecha', date.today() ), body.get( 'asistencias', [] ) )
+        if pdf_path is None:
+            return JsonResponse( { 'detail': 'Error al generar el reporte.' }, status=500 )
 
         # Serializar manualmente.
-        data = {
+        data: dict = {
             'confirmado': True,
             'total_presentes': status[ 'total_presentes' ],
             'total_ausentes': status[ 'total_ausentes' ],

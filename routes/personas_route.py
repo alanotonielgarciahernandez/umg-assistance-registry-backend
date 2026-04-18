@@ -3,28 +3,26 @@
 
 # Importar módulos de Django.
 from django.http import JsonResponse
-from django.views.decorators.http import require_safe
-import base64
-
-# Importar modelo de persona.
-from models.persona_model import Persona
+from django.views import View
 
 # Importar middleware de validación de JWT.
-from middlewares.validar_JWT import validateJWT
+from middlewares.validate_jwt import validateJWT
 
-@require_safe # Solo permite métodos GET y HEAD.
-def list_personas( request ):
-    validar_JWT_response = validateJWT( request )
-    
-    if validar_JWT_response:
-        return validar_JWT_response
-    
-    personas = Persona.objects.all().values()
-    personas_data = list( personas )
-    
-    # Convertir campos bytes a base64 para serialización JSON
-    for persona in personas_data:
-        if persona.get( 'vector_facial') and isinstance( persona[ 'vector_facial' ], bytes  ):
-            persona[ 'vector_facial' ] = base64.b64encode( persona[ 'vector_facial' ] ).decode( 'utf-8' )
+# Importar funciones de la base de datos.
+from db.get_personas import get_personas
 
-    return JsonResponse( personas_data, safe=False )
+class PersonasView( View ):
+    def get( self, request ) -> JsonResponse:
+        # Validar que el encabezado de autorización esté presente.
+        auth_header: str = request.headers.get( 'Authorization' )
+        if not auth_header:
+            return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
+         
+        # Validar el token JWT.
+        if validateJWT( auth_header ) is None:
+            return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
+        
+        # Obtener la lista de personas desde la base de datos.
+        persona_list: list[ dict ] = get_personas()
+
+        return JsonResponse( persona_list, safe=False )

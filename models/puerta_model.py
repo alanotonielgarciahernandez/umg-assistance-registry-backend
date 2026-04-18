@@ -18,7 +18,6 @@ class Puerta( models.Model ):
     nombre: str = models.CharField( max_length=50 )
 
     class Meta:
-        managed = False
         db_table = 'puertas'
 
 # Modelo de Puerta Principal.
@@ -30,5 +29,4 @@ class PuertaPrincipal( models.Model ):
     puerta: Puerta = models.ForeignKey( Puerta, models.DO_NOTHING, db_column='id_puerta', blank=True, null=True )
 
     class Meta:
-        managed = False
         db_table = 'registro_puerta_principal'
