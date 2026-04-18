@@ -298,6 +298,16 @@ Responde con el mensaje "404 Not Found".
 ## Bearer JWT como encabezado de autorización.
 El backend utiliza JWT de tipo Bearer, es necesario que el encabezado `Authorization` para los endpoints que requieren el JWT comienzen con la palabra `Bearer` seguidos del JWT sin espacios.
 
+## Estructura del proyecto
+- `db/`: Contiene las funciones para la base de datos.
+- `handlers/`: Abre las rutas para que el backend las escuche.
+- `k8s/`: Archivos de configuración para el despliegue del backend en kubernetes.
+- `middlewares/`: Capas de seguridad para las rutas.
+- `models/`: Modelos que representan las tablas de la base de datos y facilitan las operacionas a las mismas tablas.
+- `reports/`: Genera archivos PDF de registros de asistencia.
+- `routes/`:  Lógica de los endpoints del backend.
+- `tokens/`: Generador del JWT.
+
 ## Requerimientos.
 - [ Python 3.14 ]( https://www.python.org/downloads/ )
 - [ Django 6.0.3 ]( https://www.djangoproject.com/download/ )
