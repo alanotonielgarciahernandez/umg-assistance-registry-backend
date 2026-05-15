@@ -1,16 +1,8 @@
 # rol_model.py
 # Modelo de roles.
 
-from enum import Enum
-
 # Importar módulos de Django.
 from django.db import models
-
-# Enumeración de roles.
-class Roles( Enum ):
-    ADMIN = 1
-    CATEDRATICO = 2
-    ESTUDIANTE = 3
 
 # Modelo de rol.
 class Rol( models.Model ):

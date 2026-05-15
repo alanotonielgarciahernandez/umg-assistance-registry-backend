@@ -63,6 +63,12 @@ spec:
                 secretKeyRef:
                   name: umg-assistance-registry-backend-secret
                   key: DB_HOST
+            
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: DB_PORT
 
           resources:
             requests:
@@ -71,3 +77,12 @@ spec:
             limits:
               cpu: "500m"      # 0.5 núcleos de CPU máximo.
               memory: "256Mi"
+          
+          livenessProbe:
+              httpGet:
+                path: /health
+                port: 80
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 5
+              failureThreshold: 3

@@ -1,13 +1,13 @@
-# validar_rol.py
-# Validación de rol en rutas protegidas.
+# validate_role.py
+# Script para validar el rol del usuario durante el proceso de inicio de sesión.
 
-# Importar modelos.
-from models.rol_model import Roles
+# Importar modelo de usuario.
 from models.usuario_model import Usuario
 
-def validateRole( user: Usuario, allowed_role: list[ Roles ] ) -> bool:
-    # Validar que el rol del usuario esté en la lista de roles permitidos.
-    if user.rol.id_rol not in [ role.value for role in allowed_role ]:
-        return False
-    
-    return True
+# Constante para el ID del rol de "catedrático".
+ROL_CATEDRATICO = 2
+
+def validateRole( usuario: Usuario ) -> bool:
+    if usuario.rol.id_rol == ROL_CATEDRATICO:
+        return True
+    return False

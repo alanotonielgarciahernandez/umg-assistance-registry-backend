@@ -22,7 +22,6 @@ def get_curso_asistencia_by_persona( id_asignacion: int, user: Usuario, fecha: s
             'nombre': ingreso.persona.nombre,
             'apellido': ingreso.persona.apellido,
             'correo': ingreso.persona.correo,
-            'fotografia_path': ingreso.persona.fotografia_path,
             'estado': 'PRESENTE'
         }
         for ingreso in ingreso_salon

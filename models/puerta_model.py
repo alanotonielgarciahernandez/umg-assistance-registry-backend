@@ -25,8 +25,8 @@ class PuertaPrincipal( models.Model ):
     id_registro: int = models.AutoField( primary_key=True )
     persona: Persona = models.ForeignKey( Persona, models.DO_NOTHING, db_column='id_persona', blank=True, null=True )
     fecha_hora: datetime = models.DateTimeField( blank=True, null=True )
-    imagen_capturada: str = models.CharField( max_length=255, blank=True, null=True )
     puerta: Puerta = models.ForeignKey( Puerta, models.DO_NOTHING, db_column='id_puerta', blank=True, null=True )
+    imagen_capturada: str = models.CharField( max_length=255, blank=True, null=True )
 
     class Meta:
         db_table = 'registro_puerta_principal'

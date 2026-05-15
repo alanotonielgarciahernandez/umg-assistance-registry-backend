@@ -11,10 +11,8 @@ from django.views import View
 
 # Importar middlewares.
 from middlewares.validate_jwt import validateJWT
-from middlewares.validate_role import validateRole
 
 # Importar modelos.
-from models.rol_model import Roles
 from models.usuario_model import Usuario
 
 # Importar funciones de la base de datos.
@@ -37,10 +35,6 @@ class CursosView( View ):
         if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
-        # Validar rol del usuario.
-        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
-            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
-
         # Obtener la lista de cursos desde la base de datos.
         curso_list: list[ dict ] = get_cursos_by_persona( user )
 
@@ -62,10 +56,6 @@ class AsistenciaView( View ):
         if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
 
-        # Validar rol del usuario.
-        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
-            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
-
         # Obtener la lista de asistencia desde la base de datos.
         list_asistencia: list[ dict ] = get_curso_asistencia_by_persona( id_asignacion, user, fecha )
         if list_asistencia is None:
@@ -83,10 +73,6 @@ class AsistenciaView( View ):
         user: Usuario = validateJWT( auth_header )
         if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
-
-        # Validar rol del usuario.
-        if not validateRole( user, [ Roles.ADMIN, Roles.CATEDRATICO ] ):
-            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
         
         # Obtenemos datos de asistencia del cuerpo de la solicitud.
         body: dict = json.loads( request.body )
@@ -101,6 +87,8 @@ class AsistenciaView( View ):
         if pdf_path is None:
             return JsonResponse( { 'detail': 'Error al generar el reporte.' }, status=500 )
 
+        #TODO: Enviar el PDF por correo electrónico al usuario.
+
         # Serializar manualmente.
         data: dict = {
             'confirmado': True,
@@ -110,3 +98,4 @@ class AsistenciaView( View ):
         }
 
         return JsonResponse( data, safe=False )
+    

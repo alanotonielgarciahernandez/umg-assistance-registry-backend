@@ -32,8 +32,8 @@ class IngresoSalon( models.Model ):
     persona: Persona = models.ForeignKey( Persona, models.DO_NOTHING, db_column='id_persona', blank=True, null=True )
     fecha_hora: datetime = models.DateTimeField( blank=True, null=True )
     ubicacion: str = models.CharField( max_length=50, blank=True, null=True )
-    imagen_capturada: str = models.CharField( max_length=255, blank=True, null=True )
     salon: Salon = models.ForeignKey( Salon, models.DO_NOTHING, db_column='id_salon', blank=True, null=True )
+    imagen_capturada: str = models.CharField( max_length=255, blank=True, null=True )
 
     # Metadatos del modelo.
     class Meta:

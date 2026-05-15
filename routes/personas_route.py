@@ -17,7 +17,7 @@ class PersonasView( View ):
         auth_header: str = request.headers.get( 'Authorization' )
         if not auth_header:
             return JsonResponse( { 'detail': 'El encabezado de autorización es requerido.' }, status=401 )
-         
+        
         # Validar el token JWT.
         if validateJWT( auth_header ) is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )

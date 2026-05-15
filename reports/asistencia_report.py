@@ -125,7 +125,7 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
     canvas_y_position = 490
 
     # Construir los datos para la tabla de asistencia.
-    table_data = [ [ 'Foto', 'Nombre', 'Estado' ] ]
+    table_data = [ [ 'Nombre', 'Estado' ] ]
     
     # Estilos para la tabla de asistencia.
     style_list = [
@@ -137,7 +137,7 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
         ( 'BOTTOMPADDING', ( 0, 0 ), ( -1, 0 ), 8 ),
         ( 'TOPPADDING', ( 0, 0 ), ( -1, 0 ), 8 ),
         ( 'BACKGROUND', ( 0, 1 ), ( -1, -1 ), colors.HexColor('#F2F6FA') ),
-        ( 'ALIGN', ( 1, 1 ), ( 1, -1 ), 'LEFT' ),
+        ( 'ALIGN', ( 0, 1 ), ( 0, -1 ), 'LEFT' ),
         ( 'GRID', ( 0, 0 ), ( -1, -1 ), 0.5, colors.HexColor('#BDC3C7') ),
         ( 'FONTNAME', ( 0, 1 ), ( -1, -1 ), 'Helvetica' ),
         ( 'FONTSIZE', ( 0, 1 ), ( -1, -1 ), 10 ),
@@ -146,30 +146,26 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
 
     # Agregar filas de asistencia a la tabla.
     for index, assistance in enumerate( assitance_list, 1 ):
-        # TODO: Reemplazar con la foto real del estudiante.
-        foto_text = '<Imagen>'
-
-        # Agregar la fila a la tabla.
+        # Agregar la fila a la tabla (sin la columna de foto).
         table_data.append( [
-            foto_text,
             f'{ assistance.persona.nombre } { assistance.persona.apellido }',
             assistance.estado.capitalize(),
         ] )
-        
+
         # Cambiar el color del texto del estado según si es presente o ausente.
         if assistance.estado.lower() == 'presente':
             status_color = colors.HexColor( '#27AE60' )
         else:
             status_color = colors.HexColor( '#E74C3C' )
-        
-        # Agregar estilos para la celda del estado.
-        style_list.append( ( 'TEXTCOLOR', ( 2, index ), ( 2, index ), status_color ) )
-        style_list.append( ( 'FONTNAME', ( 2, index ), ( 2, index ), 'Helvetica-Bold' ) )
+
+        # Agregar estilos para la celda del estado (ahora es la columna 1).
+        style_list.append( ( 'TEXTCOLOR', ( 1, index ), ( 1, index ), status_color ) )
+        style_list.append( ( 'FONTNAME', ( 1, index ), ( 1, index ), 'Helvetica-Bold' ) )
 
     # Crear la tabla de asistencia con los datos y estilos definidos.
     table: Table = Table(
         data=table_data,
-        colWidths=[ 100, 272, 140 ],
+        colWidths=[ 372, 140 ],
         style=TableStyle( style_list )
     )
 

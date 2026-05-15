@@ -22,10 +22,8 @@ def get_personas() -> list[ dict ]:
             'tipo_persona': persona.tipo_persona,
             'carrera': persona.carrera,
             'seccion': persona.seccion,
-            'fotografia_path': persona.fotografia_path,
             'vector_facial': base64.b64encode( persona.vector_facial ).decode( 'utf-8' ) if persona.vector_facial else None,
             'carnet': persona.carnet,
-            'qr_path': persona.qr_path,
             'fecha_registro': persona.fecha_registro
         }
         for persona in personas

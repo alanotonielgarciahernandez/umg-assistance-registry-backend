@@ -32,7 +32,6 @@ def get_puerta_historico( id_instalacion: int, id_puerta: int ) -> list[ dict ] 
                         'nombre': registro.persona.nombre, 
                         'apellido': registro.persona.apellido, 
                         'correo': registro.persona.correo, 
-                        'fotografia_path': registro.persona.fotografia_path, 
                         'hora': registro.fecha_hora.strftime( '%H:%M:%S' ),
                     }
                 ]
@@ -45,7 +44,6 @@ def get_puerta_historico( id_instalacion: int, id_puerta: int ) -> list[ dict ] 
                 'nombre': registro.persona.nombre,
                 'apellido': registro.persona.apellido,
                 'correo': registro.persona.correo,
-                'fotografia_path': registro.persona.fotografia_path,
                 'hora': registro.fecha_hora.strftime( '%H:%M:%S' ),
             } )
 
@@ -77,7 +75,6 @@ def get_puerta_fecha( id_instalacion: int, id_puerta: int, fecha: str, orden: st
             'nombre': registro.persona.nombre if registro.persona else 'Desconocido',
             'apellido': registro.persona.apellido if registro.persona else '',
             'correo': registro.persona.correo if registro.persona else None,
-            'fotografia_path': registro.persona.fotografia_path if registro.persona else None,
             'fecha_hora': registro.fecha_hora.strftime( '%Y-%m-%dT%H:%M:%S' ),
             'estado': 'PRESENTE' if registro.persona else 'DESCONOCIDO'
         }

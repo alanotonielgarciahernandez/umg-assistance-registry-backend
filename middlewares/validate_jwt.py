@@ -4,6 +4,9 @@
 # Importar módulos de terceros.
 from ninja_jwt.tokens import AccessToken
 
+# Importar middlewares.
+from middlewares.validate_role import validateRole
+
 # Importar modelo de usuario.
 from models.usuario_model import Usuario
 
@@ -24,7 +27,12 @@ def validateJWT( auth_header: str ) -> Usuario | None:
 
         # Verificar que el usuario en el token exista en la base de datos.
         user: Usuario = Usuario.objects.get( id_usuario = access_token[ 'user_id' ] )
-    except Exception:
+
+        # Verificar que el rol del usuario en el token sea válido.
+        if validateRole( user ) is False:
+            return None
+    except Exception as e:
+        print( f"Error al validar el token JWT: { e }" )
         return None
 
     return user

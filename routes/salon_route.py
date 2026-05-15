@@ -6,12 +6,10 @@ from django.http import JsonResponse
 from django.views import View
 
 # Importar modelos.
-from models.rol_model import Roles
 from models.usuario_model import Usuario
 
 # Importar middlewares.
 from middlewares.validate_jwt import validateJWT
-from middlewares.validate_role import validateRole
 
 # Importar funciones de la base de datos.
 from db.get_salones import get_salones_fecha, get_salones_historico
@@ -31,10 +29,6 @@ class SalonHistoricoView( View ):
         user: Usuario = validateJWT( auth_header )
         if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
-
-        # Validar rol del usuario.
-        if not validateRole( user, [ Roles.ADMIN ] ):
-            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
 
         # Validar que se hayan proporcionado los parámetros necesarios.
         if not id_instalacion or not id_salon:
@@ -62,10 +56,6 @@ class SalonFechaView( View ):
         user: Usuario = validateJWT( auth_header )
         if user is None:
             return JsonResponse( { 'detail': 'Usuario no válido.' }, status=401 )
-
-        # Validar rol del usuario.
-        if not validateRole( user, [ Roles.ADMIN ] ):
-            return JsonResponse( { 'detail': 'Rol no autorizado.' }, status=403 )
 
         # Validar que se hayan proporcionado los parámetros necesarios.
         if not id_instalacion or not id_salon or not fecha:

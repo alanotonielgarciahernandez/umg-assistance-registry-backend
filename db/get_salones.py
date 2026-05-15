@@ -33,7 +33,6 @@ def get_salones_historico( id_instalacion: int, id_salon: int ) -> list[ dict ] 
                         'nombre': registro.persona.nombre, 
                         'apellido': registro.persona.apellido, 
                         'correo': registro.persona.correo, 
-                        'fotografia_path': registro.persona.fotografia_path, 
                         'hora': registro.fecha_hora.strftime( '%H:%M:%S' ),
                         'tipo_persona': getattr( registro.persona, 'tipo_persona', 'ESTUDIANTE' ) # Obtenemos el tipo_persona (si no existe en tu modelo actual, por defecto ponemos ESTUDIANTE) [cite: 286]
                     }
@@ -47,7 +46,6 @@ def get_salones_historico( id_instalacion: int, id_salon: int ) -> list[ dict ] 
                 'nombre': registro.persona.nombre,
                 'apellido': registro.persona.apellido,
                 'correo': registro.persona.correo,
-                'fotografia_path': registro.persona.fotografia_path,
                 'hora': registro.fecha_hora.strftime( '%H:%M:%S' ),
                 'tipo_persona': getattr( registro.persona, 'tipo_persona', 'ESTUDIANTE' )
             } )
@@ -77,7 +75,6 @@ def get_salones_fecha( id_instalacion: int, id_salon: int, fecha: str ) -> list[
             'nombre': registro.persona.nombre,
             'apellido': registro.persona.apellido,
             'correo': registro.persona.correo,
-            'fotografia_path': registro.persona.fotografia_path,
             'fecha_hora': registro.fecha_hora.strftime( '%Y-%m-%dT%H:%M:%S' ),
             'tipo_persona': getattr( registro.persona, 'tipo_persona', 'ESTUDIANTE' )
         }
