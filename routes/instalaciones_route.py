@@ -29,5 +29,5 @@ class InstalacionesView( View ):
         # Obtener la lista de instalaciones desde la base de datos.
         list_instalaciones: list[ dict ] = get_instalaciones()
 
-        # 4. Devolver la respuesta en formato JSON
+        # Devolver la respuesta en formato JSON
         return JsonResponse( list_instalaciones, safe=False )

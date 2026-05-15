@@ -23,7 +23,11 @@ RUN apt-get update \
 # Copiar código de la aplicación.
 COPY . .
 
+# Crear directorio para archivos estáticos.
 RUN mkdir -p /app/media
+
+# Crear directorio para certificados SSL.
+RUN mkdir -p /app/certs
 
 # Instalar dependencias de Python.
 RUN pip install --upgrade pip && python -m pip install --no-cache-dir -r requirements.txt

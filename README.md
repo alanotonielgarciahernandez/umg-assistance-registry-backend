@@ -15,6 +15,7 @@ Funcional — endpoints implementados y conexión a base de datos.
 - Login y emisión de JWT.
 - Endpoints para consultas y reportes (puertas, salones, asistencia).
 - Generación y envío de PDFs con reportes de asistencia.
+- Firma electrónica de PDFs.
 
 ## Requisitos
 - Python 3.14+
@@ -44,12 +45,27 @@ EMAIL_EMISOR=tu-correo-electrónico
 EMAIL_PASSWORD=tu-contraseña-de-correo
 EMAIL_SMTP_SERVER=smtp.gmail.com
 EMAIL_SMTP_PORT=587
+# Opcionales para firma digital (PKCS#12 / .pfx)
+CERT_PATH=./your_certificate.pfx    # ruta al archivo .pfx o .p12 (puede ser absoluta)
+CERT_PASSWORD=tu-contraseña-pfx     # contraseña del archivo .pfx
 ```
 
 ## Ejecución (desarrollo)
 ```bash
 py manage.py runserver
 ```
+
+## Firmas digitales (opcional)
+
+El proyecto puede firmar digitalmente los PDFs de reporte usando un certificado PKCS#12 (`.pfx` / `.p12`) y la librería `pyhanko`.
+
+- **Ruta del certificado**: configure `CERT_PATH` apuntando al archivo `.pfx` dentro del contenedor/host (ruta absoluta o relativa al proyecto).
+- **Contraseña**: configure `CERT_PASSWORD` con la contraseña del archivo PKCS#12.
+
+Notas:
+- Si `CERT_PATH` no apunta a un archivo existente, no se firmarán los archivos PDF.
+- Asegúrate de que el archivo `.pfx` tenga permisos restringidos y no lo subas a repositorios públicos.
+
 
 ## Ejecución con Docker
 ```bash
@@ -67,6 +83,8 @@ docker run -d --rm -p 8000:80 \
   -e EMAIL_PASSWORD=tu-contraseña-de-correo \
   -e EMAIL_SMTP_SERVER=smtp.gmail.com \
   -e EMAIL_SMTP_PORT=587 \
+  -e CERT_PATH=./your_certificate.pfx \
+  -e CERT_PASSWORD=tu-contraseña-pfx \
   umg-assistance-registry
 ```
 

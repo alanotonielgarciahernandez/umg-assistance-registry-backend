@@ -93,6 +93,18 @@ spec:
                 secretKeyRef:
                   name: umg-assistance-registry-backend-secret
                   key: EMAIL_SMTP_PORT
+            
+            - name: CERT_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: CERT_PATH
+
+            - name: CERT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: umg-assistance-registry-backend-secret
+                  key: CERT_PASSWORD
 
           resources:
             requests:
