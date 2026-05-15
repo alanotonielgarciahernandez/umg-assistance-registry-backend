@@ -17,7 +17,7 @@ from models.persona_model import Persona
 
 def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lista_asistencia: list[ dict ] ) -> str:
     # Obtener información del curso desde la base de datos.
-    course: Curso = Curso.objects.get( id_asignacion=id_asignacion )
+    curso: Curso = Curso.objects.get( id_asignacion=id_asignacion )
 
     # Convertir la lista de asistencia a objetos de tipo Asistencia.
     assitance_list: list[ Asistencia ] = [
@@ -60,7 +60,7 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
     c.drawString( 490, 720, f'{ fecha_asistencia }' )
 
     c.setFont( 'Helvetica', 14 )
-    c.drawString( 150, 690, course.nombre_curso )
+    c.drawString( 150, 690, curso.nombre_curso )
 
     c.setFont( 'Helvetica', 12 )
     c.drawString( 400, 690, 'Universidad Mariano Gálvez' )
@@ -79,22 +79,22 @@ def generar_registro_asistencia( id_asignacion: int, fecha_asistencia: date, lis
     c.setFont( 'Helvetica-Bold', 10 )
     c.drawString( 60, 590, 'Nombre:' )
     c.setFont( 'Helvetica', 10 )
-    c.drawString( 120, 590, str( course.nombre_curso ) )
+    c.drawString( 120, 590, str( curso.nombre_curso ) )
 
     c.setFont( 'Helvetica-Bold', 10 )
     c.drawString( 60, 570, 'Horario:' )
     c.setFont( 'Helvetica', 10 )
-    c.drawString( 120, 570, str( course.horario ) )
+    c.drawString( 120, 570, str( curso.horario ) )
 
     c.setFont( 'Helvetica-Bold', 10 )
     c.drawString( 60, 550, 'Salón:' )
     c.setFont( 'Helvetica', 10 )
-    c.drawString( 120, 550, str( course.salon.nombre ) if course.salon else '' )
+    c.drawString( 120, 550, str( curso.salon.nombre ) if curso.salon else '' )
 
     c.setFont( 'Helvetica-Bold', 10 )
     c.drawString( 60, 530, 'Catedrático:' )
     c.setFont( 'Helvetica', 10 )
-    catedratico_name = f'{ course.persona.nombre } { course.persona.apellido }' if hasattr( course, 'persona' ) and course.persona else 'No asignado'
+    catedratico_name = f'{ curso.persona.nombre } { curso.persona.apellido }' if hasattr( curso, 'persona' ) and curso.persona else 'No asignado'
     c.drawString( 120, 530, catedratico_name )
 
     # Resumen de Asistencia

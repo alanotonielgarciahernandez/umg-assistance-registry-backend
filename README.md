@@ -40,6 +40,10 @@ DB_USER=tu-usuario-sql-server
 DB_PASSWORD=tu-contraseña-de-usuario-sql-server
 DB_HOST=tu-host-sql-server
 DB_PORT=puerto-de-sql-server
+EMAIL_EMISOR=tu-correo-electrónico
+EMAIL_PASSWORD=tu-contraseña-de-correo
+EMAIL_SMTP_SERVER=smtp.gmail.com
+EMAIL_SMTP_PORT=587
 ```
 
 ## Ejecución (desarrollo)
@@ -59,6 +63,10 @@ docker run -d --rm -p 8000:80 \
   -e DB_PASSWORD=tu-contraseña-de-usuario-sql-server \
   -e DB_HOST=tu-host-sql-server \
   -e DB_PORT=puerto-de-sql-server \
+  -e EMAIL_EMISOR=tu-correo-electrónico \
+  -e EMAIL_PASSWORD=tu-contraseña-de-correo \
+  -e EMAIL_SMTP_SERVER=smtp.gmail.com \
+  -e EMAIL_SMTP_PORT=587 \
   umg-assistance-registry
 ```
 

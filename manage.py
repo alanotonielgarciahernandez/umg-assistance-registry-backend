@@ -31,6 +31,9 @@ def main():
         'DB_USER',
         'DB_PASSWORD',
         'DB_HOST',
+        'EMAIL_EMISOR',
+        'EMAIL_PASSWORD',
+        'EMAIL_SMTP_SERVER'
     ]
     for var in required_env_vars:
         if not os.getenv( var ):

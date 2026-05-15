@@ -22,6 +22,7 @@ from db.set_asistencia import save_asistencia
 
 # Importar funciones de reportes.
 from reports.asistencia_report import generar_registro_asistencia
+from reports.email_report import enviar_email_registro_asistencia
 
 class CursosView( View ):
     def get( self, request ) -> JsonResponse:
@@ -87,7 +88,9 @@ class AsistenciaView( View ):
         if pdf_path is None:
             return JsonResponse( { 'detail': 'Error al generar el reporte.' }, status=500 )
 
-        #TODO: Enviar el PDF por correo electrónico al usuario.
+        mail_status: bool = enviar_email_registro_asistencia( pdf_path, user.correo, id_asignacion, body.get( 'fecha', date.today() ), user )
+        if not mail_status:
+            return JsonResponse( { 'detail': 'Error al enviar el correo.' }, status=500 )
 
         # Serializar manualmente.
         data: dict = {

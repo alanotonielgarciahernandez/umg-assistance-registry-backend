@@ -1,0 +1,15 @@
+# Files and directories to exclude from Docker build context
+.env
+media/
+.git
+.venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+.pytest_cache/
+.vscode/
+.idea/
+.DS_Store
