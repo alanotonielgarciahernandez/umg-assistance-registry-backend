@@ -1,31 +1,11 @@
 # settings.py
+# Configuración principal de Django para el proyecto de registro de asistencia.
 
+# Importar módulos de Python.
 import os
 
-# Cargar variables de entorno desde el archivo .env.
-def _load_env_file():
-    env_path = os.path.join( os.path.dirname( __file__ ), '.env' )
-    if not os.path.exists( env_path ):
-        return
-
-    with open( env_path, 'r', encoding='utf-8' ) as env_file:
-        for line in env_file:
-            stripped_line = line.strip()
-            if not stripped_line or stripped_line.startswith( '#' ) or '=' not in stripped_line:
-                continue
-
-            key, value = stripped_line.split( '=', 1 )
-            parsed_key = key.strip()
-            parsed_value = value.strip().strip( '"' ).strip( "'" )
-            os.environ.setdefault(parsed_key, parsed_value)
-
-_load_env_file()
-
-
-def _env_list( name: str, default: str = '' ) -> list[ str ]:
-    value = os.getenv( name, default )
-    return [ item.strip() for item in value.split(',') if item.strip() ]
-
+# Importar función para cargar variables de entorno.
+from helpers.env_helpers import env_list
 
 # Habilitar modo de depuración.
 DEBUG = True
@@ -95,7 +75,7 @@ CORS_ALLOW_METHODS = [               # Métodos HTTP permitidos.
 ]
 
 # Hosts permitidos.
-ALLOWED_HOSTS = _env_list( 'DJANGO_ALLOWED_HOSTS', '*' )  # Por defecto acepta todos, se puede restringir via variable de entorno
+ALLOWED_HOSTS = env_list( 'DJANGO_ALLOWED_HOSTS', '*' )  # Por defecto acepta todos, se puede restringir via variable de entorno
 
 # URL de enrutamiento.
 ROOT_URLCONF = 'handlers.handlers'
